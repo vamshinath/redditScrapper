@@ -1,0 +1,30 @@
+<html>
+
+
+
+<body>
+  <center>
+  <form method="get" action="{{ url_for('mainpage') }}" >
+  <table>
+    <tr>Search:<input name=searchkey></tr>
+    <tr><td>Type:</td>
+      <td><input type="radio" name="file" value="vid"  >vid</td></td>
+      <td><input type="radio" name="file" value="all" checked >all</td></td>
+    </tr>
+    <tr><td>Sort:</td>
+        <td><input type="radio" name="sort" value="date" checked  >date</td></td>
+        <td><input type="radio" name="sort" value="likes"  >likes</td></td>
+    </tr>
+    <tr><td><input type="submit" value="Search" /></td></tr>
+
+  </table>
+  </form>
+
+
+
+</body>
+
+
+
+
+</html>

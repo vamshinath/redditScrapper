@@ -1,0 +1,45 @@
+<html>
+
+<head><script>document.addEventListener("keyup", function(e){if(e.keyCode== 82) window.location.reload();});</script></head>
+
+
+<body>
+
+    <center>
+
+        <table>
+
+            <tr><td>Title:{{ rd["title"] }}</td></tr>
+            <tr><td>subReddit:{{ rd["subreddit"] }}</td></tr>
+            <tr><td>Votes:{{ rd["votes"] }}</td></tr>
+            <tr><td>Author:{{ rd["author"] }}</td></tr>
+            <tr><td>Left:{{ left }}</td></tr>
+            <tr><td>Date:{{ date }}</td></tr>
+            {% if rd["isvid"] %}
+                <tr><td><a href="{{ rd['vidurl']}}" ><img src="{{ rd['vidurl'] }}" /></a></td></tr>
+            {% else %}
+                <tr><td><a href="{{ rd['url']}}" ><img src="{{ rd['url'] }}" /></a></td></tr>
+            {% endif %}
+            <tr><td><button value="Refresh Page" style="height:70px; width: 100%;" onClick="window.location.reload()">Refresh Button</button></td></tr>
+        
+        </br>
+        </br>
+        </br>
+            <tr><td><button value="Left Page" style="height:70px; width: 100%;" onClick="location.href='/reboot'">Left Button</button></td></tr>
+        </table>
+
+
+
+
+    </center>
+
+
+
+
+
+
+</body>
+
+
+
+</html>

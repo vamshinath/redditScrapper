@@ -1,0 +1,77 @@
+<html>
+
+    <head>
+        <style type="text/css" > 
+            img { max-width: 75%;max-height: 85%; }
+        </style>
+        <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+        <script>$(document).ready(function(){ $(this).scrollTop(0);});</script>
+        <script>document.addEventListener("keyup", function(e){if(e.keyCode== 82) window.location.reload();});</script>
+    </head>
+    <body>
+        <center>
+        <table>
+                <tr>
+                    
+                    <table>
+                        <tr><p style="color:red;" >comment:{{comment}}</p></tr>
+                        <tr><p>CollectionName={{ collectionName }}</p></tr>
+                        <tr><p>_id={{tmstmp}}</p></tr>
+                        <tr><p style="color:blue;">pop:{{popp}}</p></tr>
+                        
+                        <tr><p>{{twtLink}}</p></tr>
+                       
+                        <tr><p>twtTime:{{twtTime}}</p></tr>
+                        
+                        <tr><b>left:{{left}}</b></tr>
+                        <tr><p>gName:{{gflag}}</p></tr>
+                        <tr><p>gcomment:{{gname}}</p></tr>
+                        <tr><button onclick="window.location.href = '/fav?collection={{collectionName}}&id={{tmstmp}}';">Add Fav</button></tr>
+                
+                    </table>
+                   
+                </tr>
+                {% for chunk in chunks %}
+                    <tr>
+                        {% for fl in chunk %}
+                            <td>
+                                {% if "img" in tagg %}
+                                    <a href="{{ fl}}" ><img src="{{ fl }}" /></a></br>
+                                {% else %}
+                                    <a href="{{ fl }}" ><video autoplay loop src="{{ fl}}" ></video></a></br>
+
+                                {% endif %}
+
+                            </td>
+                        {% endfor %}
+
+                    </tr>
+                {% endfor %}
+		</br>
+		</br>
+            <tr>
+                <td><button value="Refresh Page" style="height:70px; width: 100%;" onClick="window.location.reload()">Refresh Button</button></td>
+                </br>
+		</br>
+                </br>
+                </br>
+                </br>
+                </br>
+
+		<td><button value="Left Page" style="height:70px; width: 100%;" onClick="location.href='/reboot'">Left Button</button></td>
+            </tr>
+        </table>
+
+        
+
+    </body>
+
+
+
+
+
+
+
+
+
+</html>
