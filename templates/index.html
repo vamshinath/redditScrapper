@@ -7,6 +7,24 @@
   <form method="get" action="{{ url_for('mainpage') }}" >
   <table>
     <tr>Search:<input name=searchkey></tr>
+
+
+    <tr><td>
+
+
+      <select name=collection>
+        {% for ct in collections %}
+        <option value= "{{ct}}" >{{ct}}</option>"
+        {% endfor %}
+        <option value='' SELECTED>''</option>"
+      </select>
+
+
+
+    </td></tr>
+
+
+
     <tr><td>Type:</td>
       <td><input type="radio" name="file" value="vid"  >vid</td></td>
       <td><input type="radio" name="file" value="all" checked >all</td></td>

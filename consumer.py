@@ -17,6 +17,8 @@ searchTerm=''
 isVid=False
 byLikes=False
 
+collection=''
+
 rdts=[]
 
 
@@ -27,6 +29,8 @@ def fload():
 
     collectionName = rd["collectionname"]
 
+    print(collectionName)
+    print("id",rd["_id"])
 
     db[collectionName].update_one({"_id":rd["_id"]},{"$set":{"viewed":True}})
 
@@ -39,21 +43,43 @@ def fload():
 def load():
     global rdts
     rdts=[]
-    if searchTerm :
-        for ct in colls:
+
+    global collection
+
+
+    print("load",collection)
+
+    if collection == "":
+        if searchTerm !="" :
+            for ct in colls:
+                if not isVid:
+                    tmrds=list(db[ct].find({"viewed":False}))
+                else:
+                    tmrds=list(db[ct].find({"viewed":False,"isvid":True}))
+                for rd in tmrds:
+                    if searchTerm.lower() in rd["title"].lower():
+                        rdts.append(rd)
+        else:
+            for ct in colls:
+                if isVid:
+                    rdts.extend(list(db[ct].find({"viewed":False,"isvid":True})))
+                else:
+                    rdts.extend(list(db[ct].find({"viewed":False})))
+    else:
+        print("else",collection)
+        if searchTerm :
             if not isVid:
-                tmrds=list(db[ct].find({"viewed":False}))
+                tmrds=list(db[collection].find({"viewed":False}))
             else:
-                tmrds=list(db[ct].find({"viewed":False,"isvid":True}))
+                tmrds=list(db[collection].find({"viewed":False,"isvid":True}))
             for rd in tmrds:
                 if searchTerm.lower() in rd["title"].lower():
                     rdts.append(rd)
-    else:
-        for ct in colls:
+        else:
             if isVid:
-                rdts.extend(list(db[ct].find({"viewed":False,"isvid":True})))
+                rdts.extend(list(db[collection].find({"viewed":False,"isvid":True})))
             else:
-                rdts.extend(list(db[ct].find({"viewed":False})))
+                rdts.extend(list(db[collection].find({"viewed":False})))
 
 
     if byLikes:
@@ -67,7 +93,9 @@ def load():
 @app.route("/reboot")
 def maston():
     os.system("sh reboot.sh consumer.py "+str(os.getpid())+" &")
-    return render_template('index.html')
+
+
+    return render_template('index.html',collections=colls)
 
 
 @app.route("/mainpage",methods=["POST","GET"])
@@ -76,6 +104,7 @@ def mainpage():
     global searchTerm
     global isVid
     global byLikes
+    global collection 
 
     searchTerm = request.args.get("searchkey")
 
@@ -83,8 +112,10 @@ def mainpage():
 
     byLikes = request.args.get("sort") == "likes"
 
-    
-    
+    collection =  request.args.get("collection")
+
+    print(collection)
+
     return redirect(url_for('load'))
 
 
@@ -101,7 +132,7 @@ def mainpage():
 
 @app.route("/")
 def main():
-    return render_template("index.html")
+    return render_template("index.html",collections=colls)
 
 if __name__ == '__main__':
     app.run('0.0.0.0',port=8000)
