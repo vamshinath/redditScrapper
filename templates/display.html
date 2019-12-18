@@ -16,9 +16,9 @@
             <tr><td>Left:{{ left }}</td></tr>
             <tr><td>Date:{{ date }}</td></tr>
             {% if rd["isvid"] %}
-                <tr><td><a href="{{ rd['vidurl']}}" ><img src="{{ rd['vidurl'] }}" /></a></td></tr>
+                <tr><td><a href="{{ rd['vidurl']}}" ><img src="{{ rd['vidurl'] }}" width="50%" height="50%" /></a></td></tr>
             {% else %}
-                <tr><td><a href="{{ rd['url']}}" ><img src="{{ rd['url'] }}" /></a></td></tr>
+                <tr><td><a href="{{ rd['url']}}" ><img src="{{ rd['url'] }}" width="50%" height="50%" /></a></td></tr>
             {% endif %}
             <tr><td><button value="Refresh Page" style="height:70px; width: 100%;" onClick="window.location.reload()">Refresh Button</button></td></tr>
         

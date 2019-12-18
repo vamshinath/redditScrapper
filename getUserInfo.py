@@ -3,6 +3,7 @@ from fake_headers import Headers
 from pymongo import  MongoClient
 from pymongo.errors import DuplicateKeyError
 
+
 client = MongoClient("localhost")
 db = client["reddit"]
 
@@ -10,15 +11,12 @@ db = client["reddit"]
 
 def scrap(url,headers):
 
-    strCollection = url.split("/r/")[-1].split("/")[0]
+    print(url)
+    strCollection = url.split("/user/")[-1].split("/")[0]
 
-    print(strCollection)
+    strCollection = strCollection+"_user"
 
     collection = db[strCollection]
-
-
-    idss = list(map(lambda  x:x["_id"],collection.find({})))
-
 
     rjson = requests.get(url,headers=headers)
     json = rjson.json()
@@ -36,10 +34,6 @@ def scrap(url,headers):
             postData["timestamp"]=post["created"]
             postData["url"]=post["url"]
             postData["author"]=post["author"]
-            try:
-                db["users"].insert_one({"_id":post["author"],"viewed":False})
-            except Exception as e:
-                e=0
             postData["_id"]=post["id"]
             postData["viewed"]=False
             postData["collectionname"]=strCollection
@@ -51,14 +45,15 @@ def scrap(url,headers):
                 postData["isvid"] =False
 
             try:
-                if not postData["_id"] in idss:
-                    collection.insert_one(postData)
-                    print(postData)
+                collection.insert_one(postData)
+                print(postData)
             except DuplicateKeyError as e:
                 print("key Error")
 
         except Exception as e:
             print(e)
+
+
 
 
 
@@ -68,12 +63,18 @@ def startsHere():
 
     uheaders = header.generate()
 
-    urls = list(map(lambda  x:x["_id"],db["subreddits"].find({})))
+    users = list(map(lambda  x:x["_id"],db["users"].find({"viewed":False})))
 
-    for url in urls:
-        print(url)
-        url = url+"new.json?limit=1000"
-        scrap(url,uheaders)
+
+    url = "https://www.reddit.com/user/"
+
+    for usr in users:
+        try:
+            nurl = url+usr+"/.json?limit=1000"
+            scrap(nurl,uheaders)
+        except Exception as e:
+            e=0
+        db["users"].update_one({"_id":usr},{"$set":{"viewed":True}})
 
 if __name__ == '__main__':
     startsHere()

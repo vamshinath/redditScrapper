@@ -12,6 +12,12 @@ db = client["reddit"]
 colls = db.list_collection_names()
 
 colls.remove("subreddits")
+colls.remove("users")
+
+colls = list(filter(lambda x: "_user" not in x,colls))
+
+
+colls=sorted(colls)
 
 searchTerm=''
 isVid=False
@@ -21,6 +27,33 @@ collection=''
 
 rdts=[]
 
+
+@app.route("/scan")
+def scanAgain():
+
+    os.system("python3 main.py &")
+    return "please wait 3 mins"
+
+
+@app.route("/add")
+def addCollection():
+
+    rd=request.args.get("collection")
+    user =request.args.get("user")
+    if rd :
+        url = "https://www.reddit.com/r/"+rd+"/"
+        try:
+            db["subreddits"].insert_one({"_id":url})
+            return url+" added"
+        except Exception as e:
+            return str(e)
+    if user :
+        try:
+            db["users"].insert_one({"_id":user,"viewed":False})
+            return user+" added"
+        except Exception as e:
+            return str(e)
+        
 
 @app.route("/fload")
 def fload():
@@ -67,19 +100,39 @@ def load():
                     rdts.extend(list(db[ct].find({"viewed":False})))
     else:
         print("else",collection)
-        if searchTerm :
-            if not isVid:
-                tmrds=list(db[collection].find({"viewed":False}))
-            else:
-                tmrds=list(db[collection].find({"viewed":False,"isvid":True}))
-            for rd in tmrds:
-                if searchTerm.lower() in rd["title"].lower():
-                    rdts.append(rd)
+        if "tier" in collection:
+            collections = list(map(lambda x:x["_id"],db[collection].find({})))
+            for collection in collections:
+                if searchTerm :
+                    if not isVid:
+                        tmrds=list(db[collection].find({"viewed":False}))
+                    else:
+                        tmrds=list(db[collection].find({"viewed":False,"isvid":True}))
+                    for rd in tmrds:
+                        if searchTerm.lower() in rd["title"].lower():
+                            rdts.append(rd)
+                else:
+                    if isVid:
+                        rdts.extend(list(db[collection].find({"viewed":False,"isvid":True})))
+                    else:
+                        rdts.extend(list(db[collection].find({"viewed":False})))
         else:
-            if isVid:
-                rdts.extend(list(db[collection].find({"viewed":False,"isvid":True})))
-            else:
-                rdts.extend(list(db[collection].find({"viewed":False})))
+            collections = list(map(lambda x:x["_id"],db[collection].find({})))
+            print(collection)
+            for collection in collections:
+                if searchTerm :
+                    if not isVid:
+                        tmrds=list(db[collection].find({"viewed":False}))
+                    else:
+                        tmrds=list(db[collection].find({"viewed":False,"isvid":True}))
+                    for rd in tmrds:
+                        if searchTerm.lower() in rd["title"].lower():
+                            rdts.append(rd)
+                else:
+                    if isVid:
+                        rdts.extend(list(db[collection].find({"viewed":False,"isvid":True})))
+                    else:
+                        rdts.extend(list(db[collection].find({"viewed":False})))
 
 
     if byLikes:
