@@ -25,6 +25,18 @@ if search:
     print("search",len(tmrds))
 
 
+if input("only 18(y/*):") == "y":
+    tmp = []
+    for twt in tmrds:
+        try:
+            if twt["over18"]:
+                tmp.append(twt)
+        except Exception as e:
+            e=0
+    if tmp:
+       tmrds = tmp
+
+
 if input("Enter sb for subreddit sort/votes(*):") == "sb":
     recs=sorted(tmrds,key=lambda x: x["subreddit"],reverse=True)
 else:

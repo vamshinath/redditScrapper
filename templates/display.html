@@ -16,7 +16,7 @@
             <tr><td>Left:{{ left }}</td></tr>
             <tr><td>Date:{{ date }}</td></tr>
             {% if rd["isvid"] %}
-                <tr><td><a href="{{ rd['vidurl'].replace('size_restricted.gif','mobile.mp4') }}" ><video autoplay loop src="{{ rd['vidurl'].replace('size_restricted.gif','mobile.mp4') }}" ></video></a></td></tr>
+                <tr><td><a href="{{ rd['vidurl'].replace('thumbs','giant').replace('-size_restricted.gif','.mp4').replace('-mobile','') }}" ><video autoplay loop src="{{ rd['vidurl'].replace('thumbs','giant').replace('-size_restricted.gif','.mp4').replace('-mobile','') }}" ></video></a></td></tr>
             {% else %}
                 <tr><td><a href="{{ rd['url']}}" ><img src="{{ rd['url'] }}" width="50%" height="50%" /></a></td></tr>
             {% endif %}
