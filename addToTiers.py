@@ -27,6 +27,9 @@ for ct in colls:
     url = "https://www.reddit.com/r/{}/".format(ct)
     webbrowser.open_new_tab(url)
     tr=input("Enter t(1/2/3/4):")
+    if tr == "":
+        db.drop_collection(ct)
+        continue
     tr="tier"+tr
     try:
         db[tr].insert_one({"_id":ct})

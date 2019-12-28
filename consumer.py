@@ -4,7 +4,8 @@ from flask import Flask, render_template,request,redirect,url_for,Markup
 import os
 app = Flask(__name__)
 from datetime import date
-
+import datetime
+import time
 client = MongoClient("localhost")
 db = client["reddit"]
 
@@ -26,7 +27,7 @@ byLikes=False
 collection=''
 
 rdts=[]
-
+days=''
 
 @app.route("/scan")
 def scanAgain():
@@ -78,11 +79,18 @@ def load():
     rdts=[]
 
     global collection
-
+    global days
 
     print("load",collection)
+    startDate=endDate=''
+
+    if days:
+        endDate = int(time.mktime(datetime.datetime.strptime(str(datetime.date.today()-datetime.timedelta(days=-1)),"%Y-%m-%d").timetuple()))
+        startDate = int(time.mktime(datetime.datetime.strptime(str(datetime.date.today()-datetime.timedelta(days=int(days)+1)),"%Y-%m-%d").timetuple()))
+
 
     if collection == "":
+        print("All collections",len(colls))
         if searchTerm !="" :
             for ct in colls:
                 if not isVid:
@@ -117,23 +125,28 @@ def load():
                     else:
                         rdts.extend(list(db[collection].find({"viewed":False})))
         else:
-            collections = list(map(lambda x:x["_id"],db[collection].find({})))
-            print(collection)
-            for collection in collections:
-                if searchTerm :
-                    if not isVid:
-                        tmrds=list(db[collection].find({"viewed":False}))
-                    else:
-                        tmrds=list(db[collection].find({"viewed":False,"isvid":True}))
-                    for rd in tmrds:
-                        if searchTerm.lower() in rd["title"].lower():
-                            rdts.append(rd)
-                else:
-                    if isVid:
-                        rdts.extend(list(db[collection].find({"viewed":False,"isvid":True})))
-                    else:
-                        rdts.extend(list(db[collection].find({"viewed":False})))
 
+            if searchTerm :
+                if not isVid:
+                    tmrds=list(db[collection].find({"viewed":False}))
+                else:
+                    tmrds=list(db[collection].find({"viewed":False,"isvid":True}))
+                for rd in tmrds:
+                    if searchTerm.lower() in rd["title"].lower():
+                        rdts.append(rd)
+            else:
+                if isVid:
+                    rdts.extend(list(db[collection].find({"viewed":False,"isvid":True})))
+                else:
+                    rdts.extend(list(db[collection].find({"viewed":False})))
+
+
+    if startDate:
+        tmppp=[]
+        for twt in rdts:
+            if int(twt["timestamp"]) >= startDate and int(twt["timestamp"]) <= endDate:
+                tmppp.append(twt)
+        rdts=tmppp
 
     if byLikes:
         rdts=sorted(rdts,key=lambda x: x["votes"],reverse=True)
@@ -159,6 +172,8 @@ def mainpage():
     global byLikes
     global collection 
 
+    global days
+
     searchTerm = request.args.get("searchkey")
 
     isVid = request.args.get("file") == "vid"
@@ -166,6 +181,8 @@ def mainpage():
     byLikes = request.args.get("sort") == "likes"
 
     collection =  request.args.get("collection")
+
+    days = request.args.get("days")
 
     print(collection)
 

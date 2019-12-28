@@ -37,6 +37,12 @@ def scrap(url,headers):
             postData["_id"]=post["id"]
             postData["viewed"]=False
             postData["collectionname"]=strCollection
+            try:
+                o18  = post["over_18"]
+            except Exception as e:
+                o18=False
+                
+            postData["over18"] = o18
 
             if "gfycat" in post["url"]:
                 postData["isvid"] = True

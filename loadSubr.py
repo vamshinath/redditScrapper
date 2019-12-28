@@ -19,14 +19,32 @@ for ct in colls:
     tmrds.extend(list(db[ct].find({"viewed":False})))
 
 
-recs=sorted(tmrds,key=lambda x: x["votes"],reverse=True)
+search = input("Enter key:")
+if search:
+    tmrds = list(filter(lambda x: search.lower() in x["title"].lower(),tmrds))
+    print("search",len(tmrds))
+
+
+if input("Enter sb for subreddit sort/votes(*):") == "sb":
+    recs=sorted(tmrds,key=lambda x: x["subreddit"],reverse=True)
+else:
+    recs=sorted(tmrds,key=lambda x: x["votes"],reverse=True)
 
 for rd in recs:
     subr=rd["subreddit"]
+   
     if subr not in visitedSubr and subr not in allrd:
+        print("https://www.reddit.com/r/{}/".format(subr))
         print(rd)
         collectionName = rd["collectionname"]
         db[collectionName].update_one({"_id":rd["_id"]},{"$set":{"viewed":True}})
-        input("Enter for next:")
+        ch = input("Enter insert(i)/*:")
         db["visited_sub_user"].insert_one({"_id":subr})
         visitedSubr.append(subr)
+        if ch == "i":
+            try:
+                url="https://www.reddit.com/r/{}/".format(subr)
+                db["subreddits"].insert_one({"_id":url})
+                print(url+" added")
+            except Exception as e:
+                print(e)
