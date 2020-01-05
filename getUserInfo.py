@@ -39,6 +39,7 @@ def scrap(url,headers):
             postData["collectionname"]=strCollection
             try:
                 o18  = post["over_18"]
+                postData["numComments"]=int(post["num_comments"])
             except Exception as e:
                 o18=False
                 

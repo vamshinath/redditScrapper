@@ -44,8 +44,10 @@ def scrap(url,headers,ourl):
             postData["timestamp"]=post["created"]
             postData["url"]=post["url"]
             postData["author"]=post["author"]
+            
             try:
                 o18  = post["over_18"]
+                postData["numComments"]=int(post["num_comments"])
             except Exception as e:
                 o18=False
                 

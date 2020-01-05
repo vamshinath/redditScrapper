@@ -148,10 +148,12 @@ def load():
                 tmppp.append(twt)
         rdts=tmppp
 
-    if byLikes:
+    if byLikes == "likes":
         rdts=sorted(rdts,key=lambda x: x["votes"],reverse=True)
-    else:
+    elif byLikes == "date":
         rdts=sorted(rdts,key=lambda x: x["timestamp"],reverse=True)
+    else:
+        rdts=sorted(rdts,key=lambda x: x["numComments"],reverse=True)
 
     return redirect(url_for('fload'))    
 
@@ -178,7 +180,7 @@ def mainpage():
 
     isVid = request.args.get("file") == "vid"
 
-    byLikes = request.args.get("sort") == "likes"
+    byLikes = request.args.get("sort")
 
     collection =  request.args.get("collection")
 
