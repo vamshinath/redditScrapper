@@ -8,6 +8,7 @@ db = client["reddit"]
 colls = db.list_collection_names()
 
 colls.remove("subreddits")
+colls.remove("loves_DND")
 allrd = colls
 colls = list(filter(lambda x: "_user" in x,colls))
 

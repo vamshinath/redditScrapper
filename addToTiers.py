@@ -9,6 +9,7 @@ colls = db.list_collection_names()
 
 colls.remove("subreddits")
 colls.remove("users")
+colls.remove("loves_DND")
 
 colls = list(filter(lambda x: "_user" not in x,colls))
 

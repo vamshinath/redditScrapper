@@ -4,8 +4,7 @@ from pymongo import MongoClient
 cl = MongoClient("localhost")
 db = cl["reddit"]
 
-collections = db.list_collection_names()
-
+collections = db.list_collection_names().remove("loves_DND")
 alldata=[]
 for collectionString in collections:
     collection = db[collectionString]

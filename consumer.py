@@ -14,6 +14,7 @@ colls = db.list_collection_names()
 
 colls.remove("subreddits")
 colls.remove("users")
+colls.remove("loves_DND")
 
 colls = list(filter(lambda x: "_user" not in x,colls))
 
@@ -34,6 +35,24 @@ def scanAgain():
 
     os.system("python3 main.py &")
     return "please wait 3 mins"
+
+
+
+@app.route("/addLove",methods=["POST","GET"])
+def addFav():
+    collectionNamee =  request.args.get("collectionName")
+
+    try:
+        val = list(db["loves_DND"].find({"_id":collectionNamee }))[0]["value"]
+    except Exception as e:
+        val=0
+        db["loves_DND"].insert_one({"_id":collectionNamee,"value":val})
+        
+    db["loves_DND"].update_one({"_id":collectionNamee},{"$set":{"value":val+1}})
+
+    print("added to fav")
+
+    return redirect(url_for('fload'))
 
 
 @app.route("/add")
