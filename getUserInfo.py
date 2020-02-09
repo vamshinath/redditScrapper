@@ -8,6 +8,8 @@ client = MongoClient("localhost")
 db = client["reddit"]
 
 
+''' scans user page and adds tweets, next run loadSub '''
+
 
 def scrap(url,headers):
 

@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 
-
 cli = MongoClient("localhost")
 db = cli["reddit"]
 

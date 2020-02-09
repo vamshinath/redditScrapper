@@ -27,7 +27,7 @@ colls = list(filter(lambda x:"tier" not in x and x not in trecs,colls ))
 for ct in colls:
     url = "https://www.reddit.com/r/{}/".format(ct)
     webbrowser.open_new_tab(url)
-    tr=input("Enter t(1/2/3/4):")
+    tr=input("Enter t(1_ind_act_special/2_specific_act/3_porn_act/4_porn/5_body_parts/6_safe/7_porn_special):")
     if tr == "":
         db.drop_collection(ct)
         continue
