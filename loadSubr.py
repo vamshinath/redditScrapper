@@ -3,7 +3,7 @@ from pymongo.errors import DuplicateKeyError
 
 
 
-client = MongoClient("localhost")
+client = MongoClient("mongodb+srv://ubuntuVM:vamshi81@mymongo-yiker.azure.mongodb.net/reddit?retryWrites=true&w=majority")
 db = client["reddit"]
 colls = db.list_collection_names()
 

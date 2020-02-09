@@ -2,7 +2,7 @@ from pymongo import  MongoClient
 import sys,re
 from prettytable import PrettyTable
 
-client = MongoClient("localhost")
+client = MongoClient("mongodb+srv://ubuntuVM:vamshi81@mymongo-yiker.azure.mongodb.net/reddit?retryWrites=true&w=majority")
 db = client["reddit"]
 
 urls = list(map(lambda  x:x["_id"],db["subreddits"].find({})))

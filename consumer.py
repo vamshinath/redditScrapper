@@ -6,7 +6,7 @@ app = Flask(__name__)
 from datetime import date
 import datetime
 import time
-client = MongoClient("localhost")
+client = MongoClient("mongodb+srv://ubuntuVM:vamshi81@mymongo-yiker.azure.mongodb.net/reddit?retryWrites=true&w=majority")
 db = client["reddit"]
 
 

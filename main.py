@@ -3,7 +3,7 @@ from fake_headers import Headers
 from pymongo import  MongoClient
 from pymongo.errors import DuplicateKeyError
 
-client = MongoClient("localhost")
+client = MongoClient("mongodb+srv://ubuntuVM:vamshi81@mymongo-yiker.azure.mongodb.net/reddit?retryWrites=true&w=majority")
 db = client["reddit"]
 import datetime
 

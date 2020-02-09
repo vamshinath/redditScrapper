@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 import time
 
-cl = MongoClient("localhost")
+cl = MongoClient("mongodb+srv://ubuntuVM:vamshi81@mymongo-yiker.azure.mongodb.net/reddit?retryWrites=true&w=majority")
 db = cl["reddit"]
 
 collections = db.list_collection_names()
