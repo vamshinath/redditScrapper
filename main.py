@@ -3,14 +3,14 @@ from fake_headers import Headers
 from pymongo import  MongoClient
 from pymongo.errors import DuplicateKeyError
 
-client = MongoClient("mongodb+srv://ubuntuVM:vamshi81@mymongo-yiker.azure.mongodb.net/reddit?retryWrites=true&w=majority")
-db = client["reddit"]
+client = MongoClient("localhost")
+db = client["reddit2"]
 import datetime
 
+from getFileSize import getFileSize
 
-def scrap(url,headers,ourl):
+def scrap(url,ourl,headers,strCollection):
 
-    strCollection = url.split("/r/")[-1].split("/")[0]
 
     print(strCollection)
 
@@ -36,6 +36,7 @@ def scrap(url,headers,ourl):
     for post in posts:
         try:
             post = post["data"]
+
             postData={}
             postData["title"] = post["title"]
             postData["subreddit"]=post["subreddit"]
@@ -44,6 +45,15 @@ def scrap(url,headers,ourl):
             postData["timestamp"]=post["created"]
             postData["url"]=post["url"]
             postData["author"]=post["author"]
+
+            
+
+            try:
+                grouper = datetime.datetime.fromtimestamp(int(post["created"]))
+                grouper = str(grouper.date())
+            except Exception as e:
+                grouper = "1"
+            postData["group"]=grouper
             
             try:
                 o18  = post["over_18"]
@@ -52,25 +62,22 @@ def scrap(url,headers,ourl):
                 o18=False
                 
             postData["over18"] = o18
-            try:
-                db["users"].insert_one({"_id":post["author"],"viewed":False})
-            except Exception as e:
-                e=0
             postData["_id"]=post["id"]
             postData["viewed"]=False
             postData["collectionname"]=strCollection
 
-            if "gfycat" in post["url"]:
-                postData["isvid"] = True
-                postData["vidurl"] =post["media"]["oembed"]["thumbnail_url"].replace("size_restricted.gif","mobile.mp4")
-
-            else:
-                postData["isvid"] =False
-
+            post["isVid"] = post["is_video"]
 
             try:
                 
+
                 if not postData["_id"] in idss:
+                    try:
+                        flsz = getFileSize(post["url"])
+                    except Exception as e:
+                        flsz = -1
+                    postData["flsz"]=flsz
+
                     collection.insert_one(postData)
                     db["subreddits"].update_one({"_id":ourl},{"$set":{"lastUpdated":datetime.datetime.now()}})
                     db["subreddits"].update_one({"_id":ourl},{"$set":{"health":health+1}})
@@ -87,29 +94,33 @@ def scrap(url,headers,ourl):
 def startsHere():
 
     header = Headers()
-
     uheaders = header.generate()
 
-    urls = list(map(lambda  x:x["_id"],db["subreddits"].find({})))
+    #scrap("https://www.reddit.com/r/JacquelineFernandez/new.json?limit=1000",uheaders,"jacq")
+
+    urls = list(map(lambda  x:x["_id"],db["subreddits"].find({"active":True})))
 
     turls={}
     for url in urls:
+        if len(url) < 1:
+            continue
         strCollection = url.split("/r/")[-1].split("/")[0]
+        print(strCollection)
         collection = db[strCollection]
         try:
             nele=len(list(collection.find({})))
         except Exception as e:
             nele=0
-        turls[url]=nele
+        turls[url]=[nele,strCollection]
 
-    urls = sorted(turls.items(),key=lambda x: x[1])
+    urls = sorted(turls.items(),key=lambda x: x[1][0])
 
-    for url,_ in urls:
+    for url,x in urls:
         try:
             print(url)
             ourl=url
             url = url+"new.json?limit=1000"
-            scrap(url,uheaders,ourl)
+            scrap(url,ourl,uheaders,x[1])
         except Exception as e:
             print(e)
             

@@ -1,13 +1,13 @@
 from pymongo import  MongoClient
 from pymongo.errors import DuplicateKeyError
 
-client = MongoClient("mongodb+srv://ubuntuVM:vamshi81@mymongo-yiker.azure.mongodb.net/reddit?retryWrites=true&w=majority")
-db = client["reddit"]
+client = MongoClient("localhost")
+db = client["reddit2"]
 
 while True:
     url = input("Enter Url:")
     try:
-        db["subreddits"].insert_one({"_id":url})
+        db["subreddits"].insert_one({"_id":url,"active":True})
         print(url,"inserted")
     except DuplicateKeyError as e:
-        print("key Error")
+        e=0#db["subreddits"].update_one({"_id":url},{"$set":{"active":True}})
